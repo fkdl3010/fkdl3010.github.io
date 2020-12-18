@@ -39,7 +39,7 @@
       
       {% for tag in trending_tags %}
         {% capture url %}/tags/{{ tag | downcase | url_encode }}/{% endcapture %}
-        <a class="post-tag" href="{{ url | relative_url }}">{{ tag | replace: '-', ' ' }}</a>
+        <a class="post-tag" href="{{ site.baseurl }}/tags/{{ tag | downcase | url_encode }}/">{{ tag | replace: '-', ' ' }}</a>
       {% endfor %}
 
       </div>
