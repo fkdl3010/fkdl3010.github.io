@@ -8,7 +8,7 @@
 #--------------------------
 title: GIL # the main title
 
-tagline: A text-focused Jekyll theme. # it will display as the sub-title
+tagline: Amazing web developer # it will display as the sub-title
 
 description: >- # used by seo meta and the atom feed
   A minimal, portfolio, sidebar,
@@ -25,15 +25,15 @@ avatar: /assets/img/sample/123.jpg # support internet resources
 github:
   username: fkdl3010 # change to your github username
 
-twitter:
-  username: twitter_username # change to your twitter username
+#twitter:
+#username: twitter_username # change to your twitter username
 
 social:
   name: Park-Sang-gil # it will shows as the copyright owner in Footer
   email: fkdl3919@icloud.com # change to your email address
   links:
     # The first element serves as the copyright owner's link
-    - https://twitter.com/username # change to your twitter homepage
+    - https://www.instagram.com/sgillli/ # change to your twitter homepage
     - https://github.com/fkdl3010 # change to your github homepage
     # Uncomment below to add more social links
     # - https://www.facebook.com/username
