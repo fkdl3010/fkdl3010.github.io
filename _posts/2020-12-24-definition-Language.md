@@ -19,7 +19,7 @@ tags: [Language ]
 
 - ### JSP
 
-```jsp
+```s
 1. Java Server Page
 2. HTML 문서내에서 JAVA 코드를 사용할 수 있는 서블릿(Servlet) 기반의 서버측 스크립트 언어이다
     JSP 스크립트 요소
@@ -31,7 +31,7 @@ tags: [Language ]
 
 - ### EL
 
-```jsp
+```s
 EL
 1. Expression Language (표현언어)
 2. JSP의 새로운 스크립트 언어이다.
@@ -80,7 +80,7 @@ EL
 
 - ### JSTL
 
-```jsp
+```s
 JSTL(JavaServer Pages Standard Tag Library)
 1. JSP 표준 태그 라이브러리(여러 프로그램이 공통으로 사용하는 코드를 모아놓은 집합)의 약어
 2. 이미 만들어진 태그를 이용하여 JSP환경에서 보다 가독성 좋게 JAVA를 사용할 수 있다.
