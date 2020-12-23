@@ -19,7 +19,7 @@ tags: [Language ]
 
 - ### JSP
 
-```java
+```jsp
 1. Java Server Page
 2. HTML 문서내에서 JAVA 코드를 사용할 수 있는 서블릿(Servlet) 기반의 서버측 스크립트 언어이다
     JSP 스크립트 요소
@@ -31,7 +31,7 @@ tags: [Language ]
 
 - ### EL
 
-```java
+```jsp
 EL
 1. Expression Language (표현언어)
 2. JSP의 새로운 스크립트 언어이다.
