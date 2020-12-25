@@ -20,6 +20,19 @@ tags: [MyBatis, MVC, AJAX]
 > index.jsp에서부터 시작합니다. 
 > 기능구현 및 페이지 이동의 경로는 .member의 suffix값을 가집니다.
 
+## 목차
+
+- [SignUp 기능](#signup-기능)
+  - [- index의 회원가입페이지 이동 버튼](#--index의-회원가입페이지-이동-버튼)
+  - [- /signUpPage.member경로 Controller](#--signuppagemember경로-controller)
+  - [- signUpPage](#--signuppage)
+  - [- /SignUp 요청을 받을 Servlet](#--signup-요청을-받을-servlet)
+- [SignOut 기능](#signout-기능)
+  - [- index의 회원탈퇴 페이지 이동 버튼](#--index의-회원탈퇴-페이지-이동-버튼)
+  - [- /signOutPage.member경로 Controller](#--signoutpagemember경로-controller)
+  - [- signOutPage](#--signoutpage)
+  - [- /SignOut 요청을 받을 Servlet](#--signout-요청을-받을-servlet)
+
 ---
 
 ## SignUp 기능

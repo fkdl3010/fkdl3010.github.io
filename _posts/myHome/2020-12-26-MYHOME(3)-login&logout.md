@@ -26,6 +26,20 @@ tags: [MyBatis, MVC, AJAX]
 > index.jsp에서부터 시작합니다. 
 > 기능구현 및 페이지 이동의 경로는 .member의 suffix값을 가집니다.
 
+## 목차
+
+- [login기능](#login기능)
+  - [- index의 로그인페이지 이동 버튼](#--index의-로그인페이지-이동-버튼)
+  - [- /loginPage.member경로 Controller](#--loginpagemember경로-controller)
+  - [- loginPage](#--loginpage)
+  - [- /login.member경로 Controller](#--loginmember경로-controller)
+  - [- login의 Command](#--login의-command)
+  - [- loginResult.jsp 로그인 결과](#--loginresultjsp-로그인-결과)
+- [logOut기능](#logout기능)
+  - [- index의 로그아웃페이지 이동 버튼](#--index의-로그아웃페이지-이동-버튼)
+  - [- /logout.member경로 Controller](#--logoutmember경로-controller)
+  - [- logout의 Command](#--logout의-command)
+
 ---
 
 ## login기능
