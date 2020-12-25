@@ -1,6 +1,6 @@
 ---
 title: (MyBatis, MVC) -2- 회원가입 기능구현
-date: 2020-12-26 03:00:00 +0900
+date: 2020-12-26 01:00:00 +0900
 categories: [JAVA-WEB, MyBatis]
 tags: [MyBatis, MVC, AJAX]
 ---
@@ -181,141 +181,185 @@ public class SignUp extends HttpServlet {
     </insert>
     ```
 
-### - login의 Command
-
->MemberloginCommand
-
-```java
-package command.member;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
-
-import common.PathNRedirect;
-import dao.MemberDao;
-import dto.MemberDto;
-
-public class MemberLoginCommand implements MemberCommand{
-
-    @Override
-    public PathNRedirect execute(HttpServletRequest request, HttpServletResponse response) {
-        
-        String mId = request.getParameter("mId");
-        String mPw = request.getParameter("mPw");
-        
-        MemberDto memberDto = new MemberDto();
-        memberDto.setmId(mId);
-        memberDto.setmPw(mPw);
-        
-        // 로그인 한 회원 정보는 session에 올린다.
-        MemberDto loginDto = MemberDao.getInstance().selectBymIdmPw(memberDto);
-        if(loginDto != null) {
-            HttpSession session = request.getSession();
-            session.setAttribute("loginDto", loginDto);
-        }
-        PathNRedirect pathNRedirect = new PathNRedirect();
-        pathNRedirect.setPath("member/loginResult.jsp");
-        pathNRedirect.setRedirect(false); // forward( mId, mPw를 보낼 수 있따).
-        
-        return pathNRedirect;
-    }
-
-}
-```
-
-- selectBymIdmPw 매퍼 (mybatis)
-
-    ```xml
-    <select id="selectBymIdmPw" parameterType="dto.MemberDto" resultType="dto.MemberDto">
-        select *
-        from member
-        where mid = #{mId}
-        and mpw = #{mPw}
-    </select>
-    ```
-
-### - loginResult.jsp 로그인 결과
-
-```javascript
-<%@ page language="java" contentType="text/html; charset=UTF-8"
-    pageEncoding="UTF-8"%>
-<script type="text/javascript">
-    /* 로그인의 성공 실패 여부는 session의 loginDto 존재여부를 확인하면된다. */
-    if( '${loginDto}' != ''){
-        alert('${param.mId}' + '님 환영합니다.');
-        location.href = '/MyHome/index.member';
-    } else{
-        alert('제출된 정보와 일치하는 회원이 없습니다.');
-        location.href = '/MyHome/loginPage.member';
-    }
-</script>
-
-```
-
 ---
 
-## logOut기능
+## SignOut 기능
 
-### - index의 로그아웃페이지 이동 버튼
+### - index의 회원탈퇴 페이지 이동 버튼
 
 > 실제로는 `header.jsp`에 위치하고있다.
 
 ```javascript
-<input type="button" value="로그아웃" onclick="fn_logout(this.form)"/>
+<input type="button" value="회원탈퇴" onclick="fn_signOut()"/>
+
 <script>
-function fn_logout(f){
-    if(confirm('로그아웃 하시겠습니까?')){
-        f.action = '/MyHome/logout.member';
-        f.submit();
+    function fn_signOut(){
+        location.href= '/MyHome/signOutPage.member';
     }
-}
 </script>
 ```
 
-### - /logout.member경로 Controller
+### - /signOutPage.member경로 Controller
 
-> logout.member의 요청 처리
+> signOutPage.member의 요청 처리
 
 ```java
-case "/logout.member":
-    command = new MemberLogoutCommand();
-    pathNRedirect = command.execute(request, response);
+case "/signOutPage.member":
+    pathNRedirect = new PathNRedirect();
+    pathNRedirect.setPath("member/signOutPage.jsp");
     break;
 ```
 
-### - logout의 Command
+### - signOutPage
 
-> MemberLogoutCommand
+```javascript
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+<jsp:include page="../template/header.jsp">
+	<jsp:param value="마이페이지" name="title"/>
+</jsp:include>
+
+<form id="f">
+
+    <h1>회원 정보를 확인하세요.</h1>
+
+    아이디<br>
+    ${loginDto.mId }<br><br> <!--MemberLoginCommand에서 session에 저장하였다. -->
+
+
+    성명<br>
+    ${loginDto.mName} <br><br>
+
+
+    가입일<br>
+    ${loginDto.mRegdate }<br><br>
+
+    <!-- hidden -->
+    <input type="hidden" name="mNo" value="${loginDto.mNo }" />
+
+    <input type="button" value="회원 탈퇴하기" id="signOutBtn" />
+    <input type="button" value="되돌아가기" onclick="location.href=document.referrer" />	
+
+</form>
+<script>
+    $(function(){
+        $('#signOutBtn').click(fn_signOut);
+    });
+
+    function fn_signOut(){
+        if(confirm('정말 탈퇴하시겠습니까?')){
+            
+            $.ajax({
+                url: '/MyHome/SignOut',
+                type: 'post',
+                data: $('#f').serialize(),
+                dataType:'text',
+                success: function(responseText){
+                    if(responseText.trim() == 'yes'){
+                        alert('탈퇴되었습니다. 이용해 주셔서 감사합니다.');
+                        location.href= '/MyHome/index.member';
+                    }else{
+                        alert('탈퇴되지않았습니다 회원 정보를 확인해 주세요.');
+                    }
+                    
+                },
+                error: function(){alert('에러');}
+                
+            });
+            
+        }
+        
+    }
+</script>
+​
+<%@ include file="../template/footer.jsp" %>
+```
+
+### - /SignOut 요청을 받을 Servlet
+
+> ajax처리는 Servlet으로 진행합니다.
+> doGet() 메소드만 작성합니다.
 
 ```java
 package command.member;
 
+import java.io.IOException;
+import java.io.PrintWriter;
+
+import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
 
-import common.PathNRedirect;
+import org.json.simple.JSONObject;
 
-public class MemberLogoutCommand implements MemberCommand{
+import dao.MemberDao;
+import dto.MemberDto;
 
-    @Override
-    public PathNRedirect execute(HttpServletRequest request, HttpServletResponse response) {
-
-    //		로그아웃은 session을 비워주면 됩니다.
-        HttpSession session = request.getSession();
+@WebServlet("/SignOut")
+public class SignOut extends HttpServlet {
+    private static final long serialVersionUID = 1L;
+    public SignOut() {
+        super();
+    }
+    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         
-        if(session.getAttribute("loginDto") != null) {
-            session.invalidate();
+        request.setCharacterEncoding("UTF-8");
+        String mNo = request.getParameter("mNo");
+        
+        int result = MemberDao.getInstance().delete(mNo);
+        
+        JSONObject responseObj = new JSONObject();
+        
+        if (result > 0) {
+            responseObj.put("result", true);
+            request.getSession().invalidate();  // 세션 초기화
+        } else {
+            responseObj.put("result", false);
         }
-        PathNRedirect pathNRedirect = new PathNRedirect();
-        pathNRedirect.setPath("index.jsp");
-        pathNRedirect.setRedirect(true);
         
-        return pathNRedirect;
+        response.setContentType("application/json; charset=UTF-8");
+        PrintWriter out = response.getWriter();
+        out.println(responseObj);
+        out.close();
+
     }
 
+    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        doGet(request, response);
+    }
 }
 ```
 
-    session을 비운 후 index페이지로 이동합니다
+- delete DAO
+
+    ```java
+    public int delete(String mNo) {
+        SqlSession ss = factory.openSession(false);
+        int result = ss.delete("mybatis.mapper.member.delete", mNo);
+        if (result > 0) {
+            ss.commit();
+        }
+        ss.close();
+        return result;
+    }
+    ```
+
+- delete 매퍼 (mybatis)
+
+    ```xml
+    <delete id="delete" parameterType="String">
+        DELETE
+        FROM MEMBER
+        WHERE MNO = #{mNo}
+    </delete>
+    ```
+
+> 탈퇴에 성공하게 되면 데이터베이스의 데이터는 삭제되며 아래의 스크립트가 실행됩니다.
+
+```javascript
+alert('탈퇴되었습니다. 이용해 주셔서 감사합니다.');
+location.href= '/MyHome/index.member'; 
+// 인덱스 페이지로 돌아가는 index.member 요청은 controller에서 처리합니다.
+```
