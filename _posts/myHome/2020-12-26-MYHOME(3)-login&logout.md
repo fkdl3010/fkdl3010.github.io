@@ -1,6 +1,6 @@
 ---
 title: (MyBatis, MVC) -3- login기능구현
-date: 2020-12-25 22:00:00 +0900
+date: 2020-12-26 02:00:00 +0900
 categories: [JAVA-WEB, MyBatis]
 tags: [MyBatis, MVC, AJAX]
 ---
@@ -11,9 +11,16 @@ tags: [MyBatis, MVC, AJAX]
         font-size: .8rem;
         color: $grey-color-light;
     }
+
+    h2{
+        color: coral;
+    }
+    h3{
+        color: #ffccbc;
+    }
 </style>
 
-## 기능구현
+## Login 기능구현
 
 > MVC패턴으로 맞춰서 진행
 > index.jsp에서부터 시작합니다. 
@@ -132,6 +139,18 @@ public class MemberLoginCommand implements MemberCommand{
 
 }
 ```
+
+- selectBymIdmPw DAO
+
+    ```java
+    public MemberDto selectBymIdmPw(MemberDto memberDto	) {
+        SqlSession ss = factory.openSession();
+        MemberDto dto = ss.selectOne("mybatis.mapper.member.selectBymIdmPw", memberDto);
+        
+        ss.close();
+        return dto;
+    }
+    ```
 
 - selectBymIdmPw 매퍼 (mybatis)
 
