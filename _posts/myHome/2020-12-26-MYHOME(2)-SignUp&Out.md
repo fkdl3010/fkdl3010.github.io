@@ -20,7 +20,9 @@ tags: [MyBatis, MVC, AJAX]
 > index.jsp에서부터 시작합니다. 
 > 기능구현 및 페이지 이동의 경로는 .member의 suffix값을 가집니다.
 
-## 목차
+<br>
+
+_목차_
 
 - [SignUp 기능](#signup-기능)
   - [- index의 회원가입페이지 이동 버튼](#--index의-회원가입페이지-이동-버튼)
