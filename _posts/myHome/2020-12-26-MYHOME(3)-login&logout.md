@@ -1,7 +1,7 @@
 ---
-title: (MyBatis, MVC)login기능구현(3)
+title: (MyBatis, MVC) -3- login기능구현
 date: 2020-12-25 22:00:00 +0900
-categories: [JAVA, JAVA-WEB, MyBatis]
+categories: [JAVA-WEB, MyBatis]
 tags: [MyBatis, MVC, AJAX]
 ---
 <style>

@@ -1,6 +1,6 @@
 ---
-title: (MyBatis, MVC)회원가입 기능구현(2)
+title: (MyBatis, MVC) -2- 회원가입 기능구현
 date: 2020-12-25 22:00:00 +0900
-categories: [JAVA, JAVA-WEB, MyBatis]
+categories: [JAVA-WEB, MyBatis]
 tags: [MyBatis, MVC, AJAX]
 ---
