@@ -29,7 +29,7 @@ tags: [MultipartRequest, File]
 
 파일 업로드 컴포넌트 중 현재 가장 인정받는 cos패키지의 MultipartRequest를 사용하여 파일 업로드 기능을 구현한다.
 
-## 파일 업로드
+## MultipartRequest 개요
 
 > uploadPage
 
@@ -57,13 +57,26 @@ tags: [MultipartRequest, File]
     </form>
 ```
 
-### > Post방식으로 보내는 이유
+### > POST 방식으로 보내는 이유
 
 GET 방식으로 보낼 수 있는 데이터는 한계가 있기 때문에 (1024byte정도? )  
 일정 수치 이상의 데이터를 보내게 되면 깨지게 된다. (게시물 작성 등..)  
 따라서 넘기는 데이터가 많을 경우 POST를 쓰거나, 또는 로그인 폼 등의 보안상의 문제가 있는 경우에는 POST를 쓰게 된다.  
 
 > 보통의 경우 DB에서 데이터를 불러오는 등의 작업을 하는 JSP페이지로 보낼 때는 GET방식으로 처리하고, 그 외의 경우엔 POST로 처리한다.
+
+### > POST 방식의 getParameter()
+
+POST 방식에서 request.getParameter()메서드를 WAS에서 알아서 처리할 수 있도록 되어있는 이유는 form에서 method가 `POST방식일 때는 디폴트값으로 enctype="application/x-www-form-urlencoded" 옵션이 설정 되어있기 때문에 이를 WAS에서 인식하고 알아서 in/output방식으로 데이터를 처리`하기 때문이다.
+
+- 따라서, `POST방식에서는 enctype이 "application/x-www-form-urlencoded"방식이 아닌 경우, getParameter()로 데이터를 불러올 수 없다.`
+- request.getHeader(“Content-Type”) 또는 request.getContentType() 를 통해서 enctype을 확인할 수 있다. 또한 이 값은 get방식의 경우는 null을 반환하게 된다. ( get방식에는 enctype이 없다. )
+
+### > 파일전송
+
+- form에서 파일 또는 이미지를 전송하기 위해서는 enctype이 “multipart/form-data”로 설정되어 있어야 한다. 따라서, request.getParameter()로 데이터를 불러올 수 없게 된다.
+
+- 또한 enctype은 post방식에서만 존재하기 때문에 GET방식에서는 파일전송이 불가능하다.
 
 ## MultipartRequest 객체를 이용한 업로드
 
@@ -98,7 +111,7 @@ GET 방식으로 보낼 수 있는 데이터는 한계가 있기 때문에 (1024
 %>
 ```
 
-### > MultipartRequest 
+### > MultipartRequest  
 
 - MultipartRequest객체의 생성자의 매개인자로는 2개짜리부터 5개짜리까지 있다.
   - 1번째 인자로는 무조건 request객체를 받는다.
@@ -139,11 +152,12 @@ GET 방식으로 보낼 수 있는 데이터는 한계가 있기 때문에 (1024
 
 ### > MultipartRequest 메소드
 
-| 반환타입 |               메소드명               |                                              설명                                              |
-| -------- | :----------------------------------: | :--------------------------------------------------------------------------------------------: |
-| String   | getFileOriginalFileName(String name) |                                       최초 올릴때 파일명                                       |
-| String   |    getFilesystemName(String name)    |                                       실제 저장된 파일명                                       |
-| File     |       getFile(String fileName)       | 업로드 된 파일의 File객체를 얻는다.우리는 이 객체로부터 파일사이즈 등의 정보를 얻어낼 수 있다. |
+| 반환타입 |                 메소드명                 |                                              설명                                              |
+| -------- | :--------------------------------------: | :--------------------------------------------------------------------------------------------: |
+| String   | getFileOriginalFileName(String filename) |                                       최초 올릴때 파일명                                       |
+| String   |    getFilesystemName(String filename)    |                                       실제 저장된 파일명                                       |
+| String   |     getContentType(String filename)      |                    업로드 된 파일의 컨텐트(enctype) 타입을 얻어올 수 있다.                     |
+| File     |         getFile(String fileName)         | 업로드 된 파일의 File객체를 얻는다.우리는 이 객체로부터 파일사이즈 등의 정보를 얻어낼 수 있다. |
 
 <br><br>
 
