@@ -11,6 +11,9 @@ tags: [MyBatis, MVC, AJAX]
         font-size: .8rem;
         color: $grey-color-light;
     }
+    img {
+        height: 50em;
+    }
 
     h2{
         color: coral;
@@ -157,4 +160,125 @@ case "/myPage.member":
     }
     ```
 
-    - MemberChangePw
+  - MemberChangePw
+
+    ```java
+    @WebServlet("/MemberChangePw")
+    public class MemberChangePw extends HttpServlet {
+        private static final long serialVersionUID = 1L;
+        public MemberChangePw() {
+            super();
+        }
+        protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+            
+            request.setCharacterEncoding("UTF-8");
+            String mPw = request.getParameter("mPw");
+            String mNo = request.getParameter("mNo");
+            
+            MemberDto memberDto = new MemberDto();
+            memberDto.setmPw(mPw);
+            memberDto.setmNo(Integer.parseInt(mNo));
+            
+            int result = MemberDao.getInstance().updatemPw(memberDto);
+            
+            String responseText = null;
+            if (result > 0) {
+                HttpSession session = request.getSession();
+                if (session.getAttribute("loginDto") != null) {
+                    /* 1. loginDto를 수정해서 다시 session에 올리는 방법 */
+                    MemberDto loginDto = (MemberDto)session.getAttribute("loginDto");
+                    loginDto.setmPw(mPw); // session의 loginDto는 참조 값이므로 적용이됨.
+
+                    /* 2. 변경된 정보를 DB에서 다시 가져와서 session에 올리는 방법 */
+                    /*
+                    session.removeAttribute("loginDto");
+                    MemberDto loginDto = MemberDao.getInstance().selectBymNo(mNo);
+                    session.setAttribute("loginDto", loginDto);
+                    */
+                }
+                responseText = "yes";
+            } else {
+                responseText = "no";
+            }
+            
+            response.setContentType("text/plain; charset=UTF-8");
+            PrintWriter out = response.getWriter();
+            out.println(responseText);
+            out.close();
+            
+        }
+        protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+            doGet(request, response);
+        }
+    }
+    ```
+
+  - updatemPw    DAO와 mapper
+
+    > MemberDAO
+
+    ```java
+    public int updatemPw(MemberDto memberDto) {
+        SqlSession ss = factory.openSession(false);
+        int result = ss.update("mybatis.mapper.member.updatemPw", memberDto);
+        if (result > 0) {
+            ss.commit();
+        }
+        ss.close();
+        return result;
+    }
+    ```
+
+    > mapper
+
+    ```xml
+    <update id="updatemPw" parameterType="dto.MemberDto">
+        UPDATE MEMBER
+            SET MPW = #{mPw}
+            WHERE MNO = #{mNo}
+    </update>
+    ```
+
+- 정보 수정 기능
+
+    > 세션에 저장된 회원정보: ${loginDto}
+    > ajax로 처리합니다.
+    > ajax처리를 위한 커맨드는 따로 작성합니다.(MVC x)
+
+    ```javascript
+    function fn_update() {
+        if ('${loginDto.mName}' == $('#mName').val() &&
+            '${loginDto.mEmail}' == $('#mEmail').val() &&
+            '${loginDto.mPhone}' == $('#mPhone').val() &&
+            '${loginDto.mAddress}' == $('#mAddress').val()) {
+            alert('변경할 회원 정보가 없습니다.');
+            return;
+        }
+        if ($('#mEmail').val() == '') {
+            alert('이메일은 필수입니다.');
+            return;
+        }
+        $.ajax({
+            url: '/MyHome/MemberUpdate',
+            type: 'post',
+            data: $('#f').serialize(),
+            dataType: 'json',
+            success: function(responseObj) {
+                if (responseObj.result) {
+                    alert('회원 정보가 수정되었습니다.');
+                    location.href = '/MyHome/myPage.member';
+                } else {
+                    alert('회원 정보가 수정되지 않았습니다.');
+                }
+            },
+            error: function(){ alert('실패'); }
+        });
+    }
+    ```
+
+  - MemberUpdate
+
+    ```java
+    
+    ```
+
