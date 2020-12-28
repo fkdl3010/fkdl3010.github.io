@@ -12,7 +12,7 @@ tags: [MyBatis, MVC, AJAX]
         color: $grey-color-light;
     }
     img {
-        height: 50em;
+        height: 30em;
     }
 
     h2{
@@ -55,6 +55,7 @@ case "/myPage.member":
 ### - myPage.jsp로 이동
 
 > 로그인 시 세션에 저장해둔 회원의 정보를 사용합니다.
+> document.referrer: 링크를 통해 이동했을때 어떤 페이지의 링크를 통해 왔는지 레퍼러가 기록되는 공간이다. 따라서 직접 특정 페이지로 들어갈 경우 이 referrer가 존재하지 않게 되므로 그게 첫 페이지임을 알 수 있다.
 
 ```javascript
 <form id="f">
@@ -94,7 +95,7 @@ case "/myPage.member":
 
     <input type="button" value="정보 수정하기" id="updateBtn" />
     <input type="button" value="되돌아가기" onclick="location.href=document.referrer" />
-
+    <!-- document.referrer: 링크를 통해 이동했을때 어떤 페이지의 링크를 통해 왔는지 레퍼러가 기록되는 공간이다. 따라서 직접 특정 페이지로 들어갈 경우 이 referrer가 존재하지 않게 되므로 그게 첫 페이지임을 알 수 있다. -->
 </form>
 ​
 ```
@@ -279,6 +280,87 @@ case "/myPage.member":
   - MemberUpdate
 
     ```java
-    
+    @WebServlet("/MemberUpdate")
+    public class MemberUpdate extends HttpServlet {
+    private static final long serialVersionUID = 1L;
+    public MemberUpdate() {
+        super();
+    }
+    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        
+        request.setCharacterEncoding("UTF-8");
+        String mNo = request.getParameter("mNo");
+        String mName = request.getParameter("mName");
+        String mEmail = request.getParameter("mEmail");
+        String mPhone = request.getParameter("mPhone");
+        String mAddress = request.getParameter("mAddress");
+        
+        MemberDto memberDto = new MemberDto();
+        memberDto.setmNo(Integer.parseInt(mNo));
+        memberDto.setmName(mName);
+        memberDto.setmEmail(mEmail);
+        memberDto.setmPhone(mPhone);
+        memberDto.setmAddress(mAddress);
+                
+        int result = MemberDao.getInstance().update(memberDto);
+        
+        // 결과 JSON
+        // {"result": true}
+        // {"result": false}
+        JSONObject responseObj = new JSONObject();
+        if (result > 0) {
+            // session에 올라간 loginDto를 제거하고 새 loginDto를 올린다.
+            HttpSession session = request.getSession();
+            if (session.getAttribute("loginDto") != null) {
+                session.removeAttribute("loginDto");
+                MemberDto loginDto = MemberDao.getInstance().selectBymEmail(mEmail);
+                // 이메일로 정보를 가져오는 selectByEmail 메소드 mNo를 이용해도 상관없다. 둘다 unique임
+                session.setAttribute("loginDto", loginDto);
+            }
+            responseObj.put("result", true);
+        } else {
+            responseObj.put("result", false);
+        }
+        
+        response.setContentType("application/json; charset=UTF-8");
+        PrintWriter out = response.getWriter();
+        out.println(responseObj);
+        out.close();
+        
+    }
+    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        doGet(request, response);
+    }
+    }
     ```
 
+  - update의 DAO와 mapper
+
+    > MemberDAO
+
+    ```java
+    public int update(MemberDto memberDto) {
+        SqlSession ss = factory.openSession(false);
+        int result = ss.update("mybatis.mapper.member.update", memberDto);
+        if (result > 0) {
+            ss.commit();
+        }
+        ss.close();
+        return result;
+    }
+    ```
+
+    > mapper
+
+    ```xml
+    <update id="update" parameterType="dto.MemberDto">
+        UPDATE MEMBER
+            SET MNAME = #{mName},
+                MEMAIL = #{mEmail},
+                MPHONE = #{mPhone},
+                MADDRESS = #{mAddress}
+            WHERE MNO = #{mNo}
+    </update>
+    ```
+
+> 정보 업데이트 뒤 이동은 `'/MyHome/myPage.member'` 입니다.
