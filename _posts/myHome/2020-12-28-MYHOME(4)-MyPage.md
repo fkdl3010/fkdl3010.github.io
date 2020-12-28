@@ -101,6 +101,9 @@ case "/myPage.member":
 - 비밀번호 변경 기능
 
     > 세션에 저장된 회원정보: ${loginDto}
+    > ajax로 처리합니다.
+    > ajax처리를 위한 커맨드는 따로 작성합니다.(MVC x)
+
     ```javascript
     $(function(){
         $('#updatePwBtn').click(fn_updatePw);
@@ -153,3 +156,5 @@ case "/myPage.member":
         
     }
     ```
+
+    - MemberChangePw
