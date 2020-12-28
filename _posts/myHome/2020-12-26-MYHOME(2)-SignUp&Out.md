@@ -1,5 +1,5 @@
 ---
-title: (MyBatis, MVC) -2- 회원가입 기능구현
+title: (MyBatis, MVC) -2- 회원가입 및 탈퇴 기능구현
 date: 2020-12-26 01:00:00 +0900
 categories: [JAVA-WEB, MyBatis]
 tags: [MyBatis, MVC, AJAX]
