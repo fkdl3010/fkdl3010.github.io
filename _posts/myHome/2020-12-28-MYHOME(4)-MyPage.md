@@ -1,5 +1,5 @@
 ---
-title: (MyBatis, MVC) -4- login기능구현
+title: (MyBatis, MVC) -4- MyPage기능구현
 date: 2020-12-28 22:00:00 +0900
 categories: [JAVA-WEB, MyBatis]
 tags: [MyBatis, MVC, AJAX]
@@ -25,10 +25,19 @@ tags: [MyBatis, MVC, AJAX]
 
 ## MyPage 기능구현
 
-> MVC패턴으로 맞춰서 진행
-> index.jsp에서부터 시작합니다. 
-> 기능구현 및 페이지 이동의 경로는 .member의 suffix값을 가집니다.
+> MVC패턴으로 맞춰서 진행  
+> index.jsp에서부터 시작합니다.  
+> 기능구현 및 페이지 이동의 경로는 .member의 suffix값을 가집니다.  
 > 세션에 로그인 정보를 가진 채 시작합니다.
+
+<br>
+
+_목차_
+
+- [MyPage기능](#mypage기능)
+  - [- index의 마이페이지 이동 버튼](#--index의-마이페이지-이동-버튼)
+  - [- /myPage.member 경로 Controller](#--mypagemember-경로-controller)
+  - [- myPage.jsp로 이동](#--mypagejsp로-이동)
 
 ## MyPage기능
 
@@ -55,7 +64,7 @@ case "/myPage.member":
 ### - myPage.jsp로 이동
 
 > 로그인 시 세션에 저장해둔 회원의 정보를 사용합니다.
-> document.referrer: 링크를 통해 이동했을때 어떤 페이지의 링크를 통해 왔는지 레퍼러가 기록되는 공간이다. 따라서 직접 특정 페이지로 들어갈 경우 이 referrer가 존재하지 않게 되므로 그게 첫 페이지임을 알 수 있다.
+>> document.referrer: 링크를 통해 이동했을때 어떤 페이지의 링크를 통해 왔는지 레퍼러가 기록되는 공간이다. 따라서 직접 특정 페이지로 들어갈 경우 이 referrer가 존재하지 않게 되므로 그게 첫 페이지임을 알 수 있다.
 
 ```javascript
 <form id="f">

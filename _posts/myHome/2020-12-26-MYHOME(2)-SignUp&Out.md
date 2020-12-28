@@ -16,9 +16,9 @@ tags: [MyBatis, MVC, AJAX]
 
 ## SignUp&Out 기능구현
 
-> MVC패턴으로 맞춰서 진행
-> index.jsp에서부터 시작합니다. 
-> 기능구현 및 페이지 이동의 경로는 .member의 suffix값을 가집니다.
+> MVC패턴으로 맞춰서 진행  
+> index.jsp에서부터 시작합니다.  
+> 기능구현 및 페이지 이동의 경로는 .member의 suffix값을 가집니다.  
 
 <br>
 
