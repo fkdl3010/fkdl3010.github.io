@@ -40,7 +40,7 @@ _목차_
 - [Find Pw 기능](#find-pw-기능)
   - [- /findPwPage.jsp 이동](#--findpwpagejsp-이동)
   - [- MemberFindPw Command](#--memberfindpw-command)
-  - [/changPwPage.member Controller](#changpwpagemember-controller)
+  - [- /changPwPage.member Controller](#--changpwpagemember-controller)
   - [- changePwPage.jsp](#--changepwpagejsp)
 
 ---
@@ -376,7 +376,7 @@ public class MemberFindPw extends HttpServlet {
     </select>
     ```
 
-### /changPwPage.member Controller
+### - /changPwPage.member Controller
 
 > 이메일을 성공적으로 입력했다면  
 
