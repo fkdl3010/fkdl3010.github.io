@@ -32,6 +32,17 @@ tags: [MyBatis, MVC, AJAX]
 
 _목차_
 
+- [Find ID기능](#find-id기능)
+  - [- /loginPage.member경로 Controller](#--loginpagemember경로-controller)
+  - [- loginPage](#--loginpage)
+  - [- /findIdPage.jsp 이동](#--findidpagejsp-이동)
+  - [- MemberFindId Command](#--memberfindid-command)
+- [Find Pw 기능](#find-pw-기능)
+  - [- /findPwPage.jsp 이동](#--findpwpagejsp-이동)
+  - [- MemberFindPw Command](#--memberfindpw-command)
+  - [/changPwPage.member Controller](#changpwpagemember-controller)
+  - [- changePwPage.jsp](#--changepwpagejsp)
+
 ---
 
 ## Find ID기능
@@ -261,6 +272,7 @@ public class MemberFindId extends HttpServlet {
             dataType: 'text',
             success: function(responseText) { //json데이터를 텍스트로 응답받으면 .trim 필수 이다. 안하면 인식안됨
                 if (responseText.trim() == 'no') {
+                    //responseText로 mNo를 가져옵니다.
                     alert('해당하는 회원 정보가 없습니다.');
                 } else {
                     alert('회원 정보가 확인되었습니다. 새로운 비밀번호를 설정하세요.');
@@ -342,3 +354,188 @@ public class MemberFindPw extends HttpServlet {
     }
 }
 ```
+
+- selectBymEmail DAO
+
+    ```java
+    public MemberDto selectBymEmail(String mEmail) {
+        SqlSession ss = factory.openSession();
+        MemberDto dto = ss.selectOne("mybatis.mapper.member.selectBymEmail", mEmail);
+        ss.close();
+        return dto;
+    }
+    ```
+
+- selectBymEmail mapper
+
+    ```xml
+    <select id="selectBymEmail" parameterType="String" resultType="dto.MemberDto">
+        SELECT *
+            FROM MEMBER
+            WHERE MEMAIL = #{mEmail}
+    </select>
+    ```
+
+### /changPwPage.member Controller
+
+> 이메일을 성공적으로 입력했다면  
+
+```javascript
+alert('회원 정보가 확인되었습니다. 새로운 비밀번호를 설정하세요.');
+location.href = '/MyHome/changePwPage.member?mNo=' + responseText.trim();
+```
+
+> /changePwPage.member을 통해 파라미터로 mNo를 가져간다.  
+
+<br>
+
+> /changePwPage.member Controller (단순이동)
+
+```java
+case "/changePwPage.member":
+    pathNRedirect = new PathNRedirect();
+    pathNRedirect.setPath("member/changePwPage.jsp");
+    break;
+```
+
+### - changePwPage.jsp
+
+```javascript
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+    
+<jsp:include page="../template/header.jsp">
+	<jsp:param value="비밀번호변경" name="title" />
+</jsp:include>
+
+<script type="text/javascript">
+	
+    $(function(){
+        $('#changePwBtn').click(fn_changePw);
+    });
+
+    function fn_changePw() {
+        if ($('#mPw').val() == '') {
+            alert('비밀번호를 입력하세요.');
+            $('#mPw').focus();
+            return;
+        }
+        if ($('#mPw').val() != $('#mPw2').val()) {
+            alert('비밀번호 입력을 확인하세요.');
+            return;
+        }
+        $.ajax({
+            url: '/MyHome/MemberChangePw',
+            type: 'post',
+            // data: 'mPw=' + $('#mPw').val() + '&mNo=' + $('#mNo').val(),
+            data: $('#f').serialize(),
+            dataType: 'text',
+            success: function(responseText) {
+                if (responseText.trim() == 'no') {
+                    alert('비밀번호가 변경되지 않았습니다.');
+                } else {
+                    alert('새로운 비밀번호로 변경되었습니다.');
+                    location.href = '/MyHome/loginPage.member';
+                }
+            },
+            error: function(){ alert('실패'); }
+        });
+    }
+	
+</script>
+
+<form id="f">
+    <label for="mPw">새로운 비밀번호 입력</label><br/>
+    <input type="password" id="mPw" name="mPw" /><br/><br/>
+    <label for="mPw2">비밀번호 확인</label><br/>
+    <input type="password" id="mPw2" /><br/><br/>
+
+    <%-- hidden --%>
+    <input type="hidden" name="mNo" id="mNo" value="${param.mNo}" />
+
+    <input type="button" value="비밀번호 변경" id="changePwBtn" />
+</form>
+
+<%@ include file="../template/footer.jsp" %>
+```
+
+- MemberChangePw
+
+    ```java
+    @WebServlet("/MemberChangePw")
+    public class MemberChangePw extends HttpServlet {
+        private static final long serialVersionUID = 1L;
+        public MemberChangePw() {
+            super();
+        }
+        protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+            
+            request.setCharacterEncoding("UTF-8");
+            String mPw = request.getParameter("mPw");
+            String mNo = request.getParameter("mNo");
+            
+            MemberDto memberDto = new MemberDto();
+            memberDto.setmPw(mPw);
+            memberDto.setmNo(Integer.parseInt(mNo));
+            
+            int result = MemberDao.getInstance().updatemPw(memberDto);
+            
+            String responseText = null;
+            if (result > 0) {
+                HttpSession session = request.getSession();
+                if (session.getAttribute("loginDto") != null) {
+                    /* 1. loginDto를 수정해서 다시 session에 올리는 방법 */
+                    MemberDto loginDto = (MemberDto)session.getAttribute("loginDto");
+                    loginDto.setmPw(mPw); // session의 loginDto는 참조 값이므로 적용이됨.
+
+                    /* 2. 변경된 정보를 DB에서 다시 가져와서 session에 올리는 방법 */
+                    /*
+                    session.removeAttribute("loginDto");
+                    MemberDto loginDto = MemberDao.getInstance().selectBymNo(mNo);
+                    session.setAttribute("loginDto", loginDto);
+                    */
+                }
+                responseText = "yes";
+            } else {
+                responseText = "no";
+            }
+            
+            response.setContentType("text/plain; charset=UTF-8");
+            PrintWriter out = response.getWriter();
+            out.println(responseText);
+            out.close();
+            
+        }
+        protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+            doGet(request, response);
+        }
+    }
+    ```
+
+- updatemPw    DAO와 mapper
+
+    > MemberDAO
+
+    ```java
+    public int updatemPw(MemberDto memberDto) {
+        SqlSession ss = factory.openSession(false);
+        int result = ss.update("mybatis.mapper.member.updatemPw", memberDto);
+        if (result > 0) {
+            ss.commit();
+        }
+        ss.close();
+        return result;
+    }
+    ```
+
+    > mapper
+
+    ```xml
+    <update id="updatemPw" parameterType="dto.MemberDto">
+        UPDATE MEMBER
+            SET MPW = #{mPw}
+            WHERE MNO = #{mNo}
+    </update>
+    ```
+
+> 새로운 비밀번호 설정 후 `loginPage.member`를 통해 로그인 페이지로 이동합니다.
