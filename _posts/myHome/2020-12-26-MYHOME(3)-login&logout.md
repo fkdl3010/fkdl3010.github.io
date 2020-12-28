@@ -210,8 +210,7 @@ public class MemberLoginCommand implements MemberCommand{
 <script>
 function fn_logout(f){
     if(confirm('로그아웃 하시겠습니까?')){
-        f.action = '/MyHome/logout.member';
-        f.submit();
+        location.href = '/MyHome/logout.member';
     }
 }
 </script>

@@ -39,6 +39,8 @@ _목차_
   - [- /myPage.member 경로 Controller](#--mypagemember-경로-controller)
   - [- myPage.jsp로 이동](#--mypagejsp로-이동)
 
+---
+
 ## MyPage기능
 
 ### - index의 마이페이지 이동 버튼
@@ -113,8 +115,8 @@ case "/myPage.member":
 
 - 비밀번호 변경 기능
 
-    > 세션에 저장된 회원정보: ${loginDto}
-    > ajax로 처리합니다.
+    > 세션에 저장된 회원정보: ${loginDto}  
+    > ajax로 처리합니다.  
     > ajax처리를 위한 커맨드는 따로 작성합니다.(MVC x)
 
     ```javascript
