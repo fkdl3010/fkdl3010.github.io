@@ -37,8 +37,7 @@ tags: [MultipartRequest, File]
     1) MultipartRequest 클래스를 이용한다.  
     2) 기존의 request를 이용해서 MultipartRequest 클래스 객체를 만든다.
 
-2. `<form method="post"  
-            enctype="multipart/form-data">`
+2. `<form method="post"  enctype="multipart/form-data">`
 
 3. `<input type="file" name="" />`
 

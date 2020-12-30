@@ -9,7 +9,7 @@ tags: [MyBatis, MVC, AJAX]
 
 > 게시판으로 이동하기
 
-```html
+```javascript
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
 <!DOCTYPE html>
@@ -19,7 +19,7 @@ tags: [MyBatis, MVC, AJAX]
 <title>Insert title here</title>
 </head>
 <body>
-	<a href="/WebExer/BBSPage.web">게시판으로 이동</a>
+    <a href="/WebExer/BBSPage.web">게시판으로 이동</a>
 </body>
 </html>
 ```
