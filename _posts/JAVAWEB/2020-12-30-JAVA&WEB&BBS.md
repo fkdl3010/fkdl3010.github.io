@@ -7,7 +7,7 @@ tags: [MyBatis, MVC, AJAX]
 
 ## 게시판 만들기
 
-> 게사핀으로 이동하기
+> 게시판으로 이동하기
 
 ```html
 <%@ page language="java" contentType="text/html; charset=UTF-8"
