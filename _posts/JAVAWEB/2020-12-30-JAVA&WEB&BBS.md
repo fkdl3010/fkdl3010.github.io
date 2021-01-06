@@ -14,14 +14,14 @@ drop table gil;
 drop sequence gil_seq;
 
 create table gil(
-	gil_no number primary key,
-	gil_writer varchar2(100) not null,
-	gil_title varchar2(1000) not null,
-	gil_content varchar2(4000),
-	gil_pw varchar2(20) not null,
-	gil_hit number,
-	gil_ip varchar2(20),
-	gil_date date
+    gil_no number primary key,
+    gil_writer varchar2(100) not null,
+    gil_title varchar2(1000) not null,
+    gil_content varchar2(4000),
+    gil_pw varchar2(20) not null,
+    gil_hit number,
+    gil_ip varchar2(20),
+    gil_date date
 );
 
 create sequence gil_seq
@@ -53,6 +53,51 @@ insert into gil values (gil_seq.nextval, '이길동', '질문입니다19.', '왜
 insert into gil values (gil_seq.nextval, '최길동', '질문입니다20.', '왜이리시끄러운것이냐20', '1111', 0, '127.0.0.1', sysdate);
 ```
 
+---
+
+### DAO
+
+```java
+package dao;
+
+import java.util.List;
+
+import org.apache.ibatis.session.SqlSession;
+import org.apache.ibatis.session.SqlSessionFactory;
+
+import common.PageVo;
+import dto.GilDto;
+import gil.config.DBService;
+
+public class GilDao {
+
+    private SqlSessionFactory factory;
+
+    private GilDao() {
+        factory = DBService.getInstance().getFactory();
+    }
+    private static GilDao gilDao = new GilDao();
+    public static GilDao getInstance() {
+        
+        return gilDao;
+    }
+
+    // 메소드
+
+    // 한 페이지의 게시물만 가져오는 메소드
+    public List<GilDto> gilBBSList(PageVo pageVo){
+        SqlSession ss = factory.openSession();
+        List<GilDto> list = ss.selectList("gil.mapper.gil.selectList", pageVo);
+        
+        ss.close();
+        
+        return list;
+    }
+```
+
+---
+
+###
 
 > 게시판으로 이동하기
 
