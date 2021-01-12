@@ -1,5 +1,5 @@
 ---
-title: [jQuery]ForEach
+title: (jQuery)ForEach
 date: 2020-12-23 22:00:00 +0900
 categories: [WEB, JQUERY]
 tags: [JQUERY, JAVASCRIPT]
