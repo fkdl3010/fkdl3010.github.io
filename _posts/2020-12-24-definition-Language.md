@@ -27,6 +27,7 @@ tags: [Language ]
     2. <%! 선언부 %> : 선언부 (declaration), 전역변수 선언, 메소드 정의
     3. <%= 표현식 %> : 표현식 (expression), 결과 출력(변수, 메소드 호출 결과, 식)
     4. <% 스크립트릿 %> : 스크립트릿 (scriptlet), Java 코드
+JSP(JavaServer Pages)는 “HTML 정적 페이지에 자바 코드를 삽입하여 웹 서버를 동적으로 웹 브라우저에 보여주는 언어”이다.
 ```
 
 - ### EL
